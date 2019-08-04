@@ -20,7 +20,7 @@ class Shopee extends Component {
     shows: [],
     showsDefault: ["IDR", "EUR", "GBP", "SGD"],
     rates: undefined,
-    inputValue: 10,
+    defaultValue: 10,
     selectedCurrencyIndex: ""
   };
 
@@ -29,7 +29,7 @@ class Shopee extends Component {
   }
 
   getRates = async () => {
-    let { currencies, shows, inputValue, showsDefault } = this.state;
+    let { currencies, shows, defaultValue, showsDefault } = this.state;
 
     const response = await axios.get(
       "https://api.exchangeratesapi.io/latest?base=USD&symbols=EUR,IDR,CAD,GBP,CHF,SGD,INR,MYR,JPY,KRW"
@@ -38,7 +38,7 @@ class Shopee extends Component {
     currencies = await this.calculate(
       currencies,
       response.data.rates,
-      inputValue
+      defaultValue
     );
 
     for (let key of showsDefault) {
@@ -134,7 +134,13 @@ class Shopee extends Component {
   }
 
   render() {
-    const { currencies, inputValue, shows, rates } = this.state;
+    const {
+      currencies,
+      defaultValue,
+      shows,
+      rates,
+      selectedCurrencyIndex
+    } = this.state;
 
     return (
       <div className="container">
@@ -145,7 +151,7 @@ class Shopee extends Component {
 
           <input
             type="text"
-            defaultValue={inputValue}
+            defaultValue={defaultValue}
             onChange={this.handleInputChange}
           />
         </div>
@@ -185,7 +191,7 @@ class Shopee extends Component {
         })}
 
         <div className="sumbit">
-          <select onChange={this.selectCurrency}>
+          <select value={selectedCurrencyIndex} onChange={this.selectCurrency}>
             <option value="">Add Currency</option>
 
             {currencies.map((currency, index) => {
